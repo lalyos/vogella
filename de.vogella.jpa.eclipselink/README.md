@@ -55,5 +55,16 @@ so Family is the inverse side, meaning Person is the owner.
 
 so if want to be compliant to 3.2.4 the relationship must be persisted as:
 ```
-    person1.setFamily(family1)
+    person.setFamily(family)
+```
+
+but as 3.2.4 states it later:
+> It is the developer’s responsibility to keep the in-memory references held on the owning side and those held on the inverse side consistent with each other when they change.
+
+so 2 lines are needed to keep the relationship correct both in memory and in the db:
+```
+    // needed to keep DB consistent
+    person.setFamily(family)
+    // needed to keep in-memory refs consistent
+    family.getMembers().add(person);
 ```
