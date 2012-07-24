@@ -1,4 +1,5 @@
-== running
+Running
+================================
 
 In order to run the examples you need maven installed, and be on the PATH
 
@@ -8,7 +9,8 @@ mvn test
 ```
 it will only run for the first time
 
-=== clean test
+clean test
+-------------------------
 
 If you want to run the tests from scratch you can use the 'clean' goal, which deletes the whole derbyDB directory
 
@@ -38,3 +40,20 @@ ID                  |LASTNAME            |FIRSTNAME           |FAMILY_ID
 ...
 ```
 
+the problem is that it JPA Persistence spec 2.0 says in 3.2.4:
+> Bidirectional relationships between managed entities will be persisted based on references held by the owning side of the relationship.
+
+and in 2.9:
+> The inverse side of a bidirectional relationship must refer to its owning side by use of the mappedBy element of the OneToOne, OneToMany, or ManyToMany annotation.
+
+so in case of the Person - Family relationship, in Family the member field is annotated as:
+```
+    @OneToMany(mappedBy = "family")
+    private final List<Person> members = new ArrayList<Person>();
+```
+so Family is the inverse side, meaning Person is the owner.
+
+so if want to be compliant to 3.2.4 the relationship must be persisted as:
+```
+    person1.setFamily(family1)
+```
